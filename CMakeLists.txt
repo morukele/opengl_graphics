@@ -18,6 +18,6 @@ FetchContent_MakeAvailable(glfw)
 add_library(glad src/glad.c)
 target_include_directories(glad PUBLIC include)
 
-add_executable(graphics_programming src/1.getting_started/hello_window.cpp)
+add_executable(graphics_programming src/window.cpp)
 
 target_link_libraries(graphics_programming PRIVATE glad glfw)
