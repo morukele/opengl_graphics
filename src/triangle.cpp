@@ -9,12 +9,6 @@ void processInput(GLFWwindow* window);
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
 
-float vertices[] = {
-    -0.5f, -0.5f, 0.0f, // left
-     0.5f, -0.5f, 0.0f, // right
-     0.0f, 0.5f, 0.0f   // top
-};
-
 // glpl: OpenGL vertex shader code
 // -------------------------------
 const char *vertexShaderSource = "#version 330 core\n"
@@ -85,6 +79,7 @@ int main()
     // fragment shader
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
     // check for shader compile error
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success)
@@ -107,17 +102,54 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    // set up vertex data plus buffer(s), and configure vertex attribute
+    // -----------------------------------------------------------------
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // left
+         0.5f, -0.5f, 0.0f, // right
+         0.0f, 0.5f, 0.0f   // top
+    };
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO); // generate vertex array objects
+    glGenBuffers(1, &VBO); // generate vertex buffer objects
+
+    // bind the VAO
+    glBindVertexArray(VAO);
+    // copy vertex array in a buffer for OpenGL to use
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // set the vert attributes pointers
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
+    glEnableVertexAttribArray(0);
+
+    // binding the buffer to 0
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // unbind VAO, not always necessary
+    glBindVertexArray(0);
+
     // render loop: ensure program runs till we stop it
     // ------------------------------------------------
     while (!glfwWindowShouldClose(window))
     {   // input
+        // -----
         processInput(window);
 
-        // render: clear buffer
+        // render
+        // ------
+        // clear buffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // check and call events and swap the buffers
+        // draw triangle
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0); // unbind the VAO object
+
+        // glfw: swap buffers and poll IO events
+        // -------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
