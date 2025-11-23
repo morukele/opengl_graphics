@@ -1,3 +1,6 @@
+//
+// Created by Oghenemarho Orukele on 23/11/2025.
+//
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -104,21 +107,33 @@ int main()
 
     // set up vertex data plus buffer(s), and configure vertex attribute
     // -----------------------------------------------------------------
+    // vertices of combined triangles
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-         0.5f, -0.5f, 0.0f, // right
-         0.0f, 0.5f, 0.0f   // top
+         0.5f,  0.5f, 0.0f, // top right
+         0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f, // top left
+    };
+    // order in which the triangles will be drawn
+    unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
     };
 
-    unsigned int VBO, VAO;
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO); // generate vertex array objects
     glGenBuffers(1, &VBO); // generate vertex buffer objects
+    glGenBuffers(1, &EBO); // generate element buffer objects
 
     // bind the VAO
     glBindVertexArray(VAO);
     // copy vertex array in a buffer for OpenGL to use
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // bind the EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     // set the vert attributes pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
     glEnableVertexAttribArray(0);
@@ -129,7 +144,7 @@ int main()
     // unbind VAO, not always necessary
     glBindVertexArray(0);
 
-    // wire frame rendering
+    // wire frame polygons
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop: ensure program runs till we stop it
@@ -148,7 +163,7 @@ int main()
         // draw triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // unbind the VAO object
 
         // glfw: swap buffers and poll IO events
