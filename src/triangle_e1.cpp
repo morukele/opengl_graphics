@@ -1,3 +1,6 @@
+//
+// Created by Oghenemarho Orukele on 23/11/2025.
+//
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -104,10 +107,16 @@ int main()
 
     // set up vertex data plus buffer(s), and configure vertex attribute
     // -----------------------------------------------------------------
+    // vertex data for two triangles
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-         0.5f, -0.5f, 0.0f, // right
-         0.0f, 0.5f, 0.0f   // top
+        // first triangle
+        -0.8f, 0.2f, 0.0f, // left
+        -0.2f, 0.2f, 0.0f, // right
+        -0.5f, 0.5f, 0.0f, // top
+        // second triangle
+         0.2f,  0.2f, 0.0f, // left
+         0.8f,  0.2f, 0.0f, // right
+         0.5f,  0.5f, 0.0f  // top
     };
 
     unsigned int VBO, VAO;
@@ -130,7 +139,7 @@ int main()
     glBindVertexArray(0);
 
     // wire frame rendering
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop: ensure program runs till we stop it
     // ------------------------------------------------
@@ -148,7 +157,7 @@ int main()
         // draw triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0); // unbind the VAO object
 
         // glfw: swap buffers and poll IO events
@@ -157,6 +166,8 @@ int main()
         glfwPollEvents();
     }
 
+    // glfw: terminate all previously allocated glfw resources
+    // -------------------------------------------------------
     glfwTerminate();
     return 0;
 }

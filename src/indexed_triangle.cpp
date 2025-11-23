@@ -23,7 +23,7 @@ const char *vertexShaderSource = "#version 330 core\n"
 
 // glpl: OpenGL fragment shader code
 // ---------------------------------
-const char *fragmentShaderSource = "#version 330 core\n"
+const char *fragmentShader1Source = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
@@ -81,7 +81,7 @@ int main()
     }
     // fragment shader
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glShaderSource(fragmentShader, 1, &fragmentShader1Source, nullptr);
     glCompileShader(fragmentShader);
     // check for shader compile error
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
@@ -163,7 +163,7 @@ int main()
         // draw triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0); // unbind the VAO object
 
         // glfw: swap buffers and poll IO events
